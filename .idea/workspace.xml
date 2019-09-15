@@ -145,9 +145,9 @@
       <list>
         <item itemvalue="Python.reconhecimento-facial" />
         <item itemvalue="Python.deteccao-facial" />
+        <item itemvalue="Python.deteccaoDlibHog" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.deteccao-facial" />
-        <item itemvalue="Python.deteccaoDlibHog" />
       </list>
     </recent_temporary>
   </component>

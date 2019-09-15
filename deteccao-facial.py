@@ -17,7 +17,8 @@ def deteccaoTreinamento(totalfotos, pessoaNome, pessoaIdentify):
     fhotos = 0 #contador de fotos já tiradas
     while True:
         ret, frames = cap.read() #chama a leitura da captura da webcam
-        frame = cv2.flip(frames, 2) #mantém um padrão de espelhamento da imagem, pois cada webcam pode espelhar a imagem de um jeito
+        frame = cv2.resize(frames, (500, 360))
+        frame = cv2.flip(frame, 2) #mantém um padrão de espelhamento da imagem, pois cada webcam pode espelhar a imagem de um jeito
         cv2.putText(frame, "Foto {}/{}".format(fhotos + 1, totalfotos), (0, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                     (0, 255, 255))# escreve na tela a quantidade de fotos já tiradas pelo total a tirar
         k = cv2.waitKey(100) #aguarda usuário digitar algo

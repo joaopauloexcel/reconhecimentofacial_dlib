@@ -25,18 +25,20 @@ def reconhecimentoFacial(identify):
         exit(0)
     while cap.isOpened(): #enquanto câmera estiver aberta
         conectado, video = cap.read() # realiza a leitura da imagem da câmera
-        #video = cv2.resize(video, (400,300))
+        video = cv2.resize(video, (500,360))
         frame = cv2.flip(video, 2)#padroniza espelhamento da webcam, pois cada uma pode espelhar a imagem de um jeito.
         frameCinza = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)#passa cada frame obtido para a escala de cinza
-        if(count % 2 == 0):
-            facesDetectadas = detectorFace(frameCinza)# Guarda o array de faces detectadas na escala de cinza
-            if facesDetectadas: # se houver faces detectadas
-                for face in facesDetectadas: # para cada face detectada
-                    #pega 4 pontos extemos de cada uma delas, esquerda, top, direita, baixo
-                    e, t, d, b = (int(face.left()), int(face.top()),
-                                  int(face.right()), int(face.bottom()))
-                    # pontosFaciais recebem o detector de pontos de cada face na escala de cinza
-                    pontosFaciais = detectorPontos(frameCinza, face)
+        facesDetectadas = detectorFace(frameCinza)# Guarda o array de faces detectadas na escala de cinza
+        if facesDetectadas: # se houver faces detectadas
+            for face in facesDetectadas: # para cada face detectada
+                #pega 4 pontos extemos de cada uma delas, esquerda, top, direita, baixo
+                e, t, d, b = (int(face.left()), int(face.top()),
+                              int(face.right()), int(face.bottom()))
+                # pontosFaciais recebem o detector de pontos de cada face na escala de cinza
+                pontosFaciais = detectorPontos(frameCinza, face)
+                # Aqui estou aplicando o reconhecimento facial a cada 50 frames, para não ficar lento.
+                if (count % 50 == 0):
+                    #aplicados o reconhecimento facial.
                     # O descritorFacial recebe a função que retorna o resultado de comparação
                     # entre os frames transmitidos na webcan com os pontos faciais obtidos na imagem
                     # aqui não tem como ser escala de cinza, pois essa função trabalha com escala RGB
@@ -67,25 +69,24 @@ def reconhecimentoFacial(identify):
                         nome = ''
                         # Aqui, estou colorindo a variável que será utilizada no retânculo de "Vermelho"
                         corAlert = {'b': 0, 'g': 0, 'r': 255}
-                    # Aqui obtemos o resultado de acerto de cada reconhecimento, lembrando que o limiar
-                    #aceitará uma face como reconhecida se essa tiver de 50% de acerto para cima
+                        # Aqui obtemos o resultado de acerto de cada reconhecimento, lembrando que o limiar
+                        #aceitará uma face como reconhecida se essa tiver de 50% de acerto para cima
                     result = (1 - distanciaMinima) * 100
-                    # Aqui desenho o retângulo na tela com a cor desejada e na posição dos pontos da face.
-                    cv2.rectangle(frame, (e, t), (d, b), (corAlert['b'], corAlert['g'], corAlert['r']), 2)
-                    # Aqui armazeno o nome da pessoa reconhecida, se ela não for reconhecida, aqui chegará ''
-                    texto = "{}".format(nome)
-                    # Se houver resultado obtido de margem de acerto
+                        # Se houver resultado obtido de margem de acerto
                     if result:
                         # Aqui, estou mandando printar no console a porcentagem de acerto do reconhecimento de uma pessoa
-                        print('{} % de certeza'.format(round(result,2)))
-                    # Aqui, estou mandando esceve na tela o nome da pessoa no topo direito do retângulo.
-                    cv2.putText(frame, texto, (d,t), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 255, 0))
+                        print('{} % de certeza'.format(round(result, 2)))
+                # Aqui desenho o retângulo na tela com a cor desejada e na posição dos pontos da face.
+                cv2.rectangle(frame, (e, t), (d, b), (corAlert['b'], corAlert['g'], corAlert['r']), 2)
+                # Aqui armazeno o nome da pessoa reconhecida, se ela não for reconhecida, aqui chegará ''
+                texto = "{}".format(nome)
+                # Aqui, estou mandando esceve na tela o nome da pessoa no topo direito do retângulo.
+                cv2.putText(frame, texto, (d,t), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 255, 0))
         # pressionou 'q', sai da aplicação.
         if cv2.waitKey(1) == ord('q'):
             break
         # Abre a imagem da webcan na tela.
         cv2.imshow('Reconhecimento de Face', frame)
-        print(count)
         count+=1
     cap.release()
     cv2.destroyAllWindows()
